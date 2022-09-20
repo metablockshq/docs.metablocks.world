@@ -1,5 +1,5 @@
 ---
-chapterNumber: 10
+sidebar_position: 10
 emoji: 👩🏼‍🎨
 title: Change authority for accounts
 subTitle: Understand how to change authority for accounts

@@ -1,5 +1,5 @@
 ---
-chapterNumber: 9
+sidebar_position: 9
 emoji: 👩🏼‍🎨
 title: Burn tokens
 subTitle: Learn how to burn tokens from a token account

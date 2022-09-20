@@ -1,5 +1,5 @@
 ---
-chapterNumber: 4
+sidebar_position: 4
 emoji: 👩🏼‍🎨
 title: Testing Create Mint
 subTitle: Understand how to write test cases

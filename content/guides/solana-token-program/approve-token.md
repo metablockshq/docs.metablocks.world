@@ -1,5 +1,5 @@
 ---
-chapterNumber: 11
+sidebar_position: 11
 emoji: 👩🏼‍🎨
 title: Approve tokens to an account
 subTitle: Understand how to delegate tokens to another authority account

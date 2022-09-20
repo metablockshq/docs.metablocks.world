@@ -1,46 +1,41 @@
 ---
-chapterNumber: 7
+sidebar_position: 8
 emoji: 👩🏼‍🎨
-title: Freeze Token Account
-subTitle: Understand how to freeze a token account
-slug: freeze-token-account
+title: Unfreeze token account
+subTitle: Learn how to unfreeze a token account
+slug: unfreeze-token-account
 tags:
   - blockchain
 guideSlug: token-program-anchor
 ---
 ## Outline
 
-Sometimes it would be necessary to freeze a token account. In this chapter, we will look at freezing a token account. 
+`thaw` instruction from `token` program is used to unfreeze a frozen token account. 
 
-The final outcome of this chapter is found [here](https://github.com/metablockshq/spl-token-chapters/tree/main/Chapter%207%20-%20Freeze%20Token%20Accounts)
+Therefore, the prerequisite to `thaw` instruction is that the token account is frozen.
+
+The final outcome of this chapter can be found [here](https://github.com/metablockshq/spl-token-chapters/tree/main/Chapter%208%20-%20Unfreeze%20Token%20Accounts)
+
 
 ## Prerequisite
 
-For the demonstration purpose, we will retain only `create_mint` and `transfer_mint` instructions. 
+For the demonstration purpose, we will be using the previous chapter's repo. You can clone the [repo](https://github.com/metablockshq/spl-token-chapters/tree/main/Chapter%207%20-%20Freeze%20Token%20Accounts) for getting started. 
 
-So remove `transfer_token_to_another` instruction, `TransferTokenToAnother` context and test case related to it in `spl-token.ts` 
+## How to `Thaw` (unfreeze) an account ?
 
-Or you can clone the [Chapter - 5 repo](https://github.com/metablockshq/spl-token-chapters/tree/main/Chapter%205%20-%20Transfer%20New%20Mint) for getting started immediately
+A `thaw` operation is done on a token account to unfreeze a `frozen` account. Only `spl_token_mint` authority can perform this action. Hence only `payer` can perform this action.
 
-## How to freeze a token account ?
+This also involves the below process. 
 
-A `freeze` operation is done on a token account. This is so to prevent the `transfer` of tokens. 
+1. Create a `UnfreezeTokenAccount` context  
+2. Then write an instruction for freezing the token.
 
-Only `spl_token_mint` authority can perform this action. Hence only `payer` can perform this action.
-
-This also involves the same process. 
-
-1. Create a `FreezeTokenAccount` context  
-2. Then write an instruction `freeze_token_account` for freezing the token.
-
-### Step-1: Create a `FreezeTokenAccount` context ?
-
-Let's create a `FreezeTokenAccount` context using the `struct`
+### Step-1 : Let's create a `UnfreezeTokenAccount` context using the `struct`
 
 ```rust
-// Freeze token account
+// Unfreeze token account
 #[derive(Accounts)]
-pub struct FreezeTokenAccount<'info> {
+pub struct UnfreezeTokenAccount<'info> {
     #[account(
         mut,
          seeds = [
@@ -87,41 +82,37 @@ pub struct FreezeTokenAccount<'info> {
 7. `rent` might have to passed as we are using `associated_token_program`
 8. `associated_token_program` account is passed for creating ATA.
 
-We will now create an instruction `freeze_token_account` to freeze the token ATA account.
+We will now create an instruction `unfreeze_token_account` to unfreeze the token account.
 
-Let's update the import in `lib.rs` file.
+### Step-2 : Update the imports.
+
+First, let us update the import `lib.rs`
 
 ```rust
-use anchor_spl::{token::{self, Mint, Token, TokenAccount, FreezeAccount}, associated_token::AssociatedToken};
+use anchor_spl::{token::{self, Mint, Token, TokenAccount, FreezeAccount, ThawAccount}, associated_token::AssociatedToken};
 ```
 
-### Step-2 : Then we add the `freeze_token_account` instruction.
+ Add the `unfreeze_token_account` instruction.
 
 ```rust
-    pub fn freeze_token_account(ctx : Context<FreezeTokenAccount>) -> Result<()> {
+    pub fn unfreeze_token_account(ctx : Context<UnfreezeTokenAccount>) -> Result<()> {
         let cpi_context = CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
-            FreezeAccount {
+            ThawAccount {
                 account : ctx.accounts.payer_mint_ata.to_account_info(),
                 mint : ctx.accounts.spl_token_mint.to_account_info(),
                 authority : ctx.accounts.payer.to_account_info()
             },
         );
-        token::freeze_account(cpi_context)?;
+        token::thaw_account(cpi_context)?;
         Ok(())
     }
 ```
 
-As we can see above, we are doing a `CPI` call to token program to freeze the `payer_mint_ata` account. 
-
-The signature of `freeze_account` function is that is requires us to pass `FreezeAccount` struct as context. 
-
-Since we are calling `token::freeze_account` function from another program, we need to create a `CPI context` by using `CpiContext::new` function.
-
-To test this out, let us add a test case in the spl-token.ts` test file.
+Add a test case in `spl-token.ts` to test unfreeze instruction.
 
 ```typescript
-  it("should freeze token account of payer wallet ", async () => {
+  it("should unfreeze token account of payer wallet ", async () => {
     try {
       const [splTokenMint, _1] = await findSplTokenMintAddress();
 
@@ -133,7 +124,7 @@ To test this out, let us add a test case in the spl-token.ts` test file.
       );
 
       const tx = await program.methods
-        .freezeTokenAccount()
+        .unfreezeTokenAccount()
         .accounts({
           splTokenMint: splTokenMint,
           vault: vaultMint,
@@ -154,14 +145,14 @@ To test this out, let us add a test case in the spl-token.ts` test file.
   });
 ```
 
-Now run the command 
+Run the command 
 
 ```bash
 anchor test
 ```
 
-You should be able to pass the test as seen below.
+You should see a successful test run.
 
-![](./assets/freeze_account_success.png "freeze_account_success")
+![](./assets/thaw_account_success.png "thaw_account_success")
 
-Alright, in the next chapter let's learn to unfreeze a token account using `thaw` instruction from `token` program
+In the chapter, we will focus on `burning` tokens.

@@ -1,5 +1,5 @@
 ---
-chapterNumber: 1
+sidebar_position: 1
 emoji: 👨‍💻
 title: Prerequisites
 slug: spl-tokens

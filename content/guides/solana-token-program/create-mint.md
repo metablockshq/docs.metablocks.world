@@ -1,5 +1,5 @@
 ---
-chapterNumber: 3
+sidebar_position: 3
 emoji: 👩🏼‍🎨
 title: Create a new mint
 subTitle: Understand how to create a new mint
