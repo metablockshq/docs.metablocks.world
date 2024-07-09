@@ -7,9 +7,10 @@ tags:
   - blockchain
 guideSlug: token-program-anchor
 ---
+
 ## Outline
 
-It is a necessary operation to transfer tokens between accounts. Use `transfer` instruction of `token` program to perform transfer operation. 
+It is a necessary operation to transfer tokens between accounts. Use `transfer` instruction of `token` program to perform transfer operation.
 
 The final outcome of this chapter could be found [here](https://github.com/metablockshq/spl-token-chapters/tree/main/Chapter%206%20-%20Transfer%20Tokens)
 
@@ -23,7 +24,7 @@ It also involves the same process. Create a `TransferTokenToAnother` context and
 
 Below is the `struct` that we define for transferring a `spl_token_mint` token to other account.
 
-```rust
+```rust showLineNumbers
 // Transfer token to another account
 #[derive(Accounts)]
 pub struct TransferTokenToAnother<'info> {
@@ -80,7 +81,7 @@ pub struct TransferTokenToAnother<'info> {
 5. `system_program` account for executing the instruction.
 6. `token_program` account used for performing `transfer` operation
 7. `init` decorator uses `rent` account for creating account
-8. We are creating a new ata account. Hence we pass `associated_token_program` 
+8. We are creating a new ata account. Hence we pass `associated_token_program`
 9. `another_mint_ata` account to which we transfer the token.
 10. `another_account` account is the owner of `another_mint_ata`
 
@@ -112,57 +113,56 @@ const anotherWallet = anchor.web3.Keypair.generate(); // newly created another w
 And add some sols to the wallet using `addSols` function in `before` function block.
 
 ```typescript
-  before("Add sols to wallet ", async () => {
-    await addSols(provider, payer.publicKey);
-    await addSols(provider, anotherWallet.publicKey); // add sols to another wallet 
-  });
+before("Add sols to wallet ", async () => {
+  await addSols(provider, payer.publicKey);
+  await addSols(provider, anotherWallet.publicKey); // add sols to another wallet
+});
 ```
 
 We will test case in `spl-token.ts`. Add the following in your test file.
 
 ```typescript
-  it("should transfer 1 token from payer_mint_ata to another_mint_ata", async () => {
-    try {
-      
-      const [splTokenMint, _1] = await findSplTokenMintAddress();
+it("should transfer 1 token from payer_mint_ata to another_mint_ata", async () => {
+  try {
+    const [splTokenMint, _1] = await findSplTokenMintAddress();
 
-      const [vaultMint, _2] = await findVaultAddress();
+    const [vaultMint, _2] = await findVaultAddress();
 
-      const [payerMintAta, _3] = await findAssociatedTokenAccount(
-        payer.publicKey,
-        splTokenMint
-      );
+    const [payerMintAta, _3] = await findAssociatedTokenAccount(
+      payer.publicKey,
+      splTokenMint
+    );
 
-      const [anotherMintAta, _4] = await findAssociatedTokenAccount(
-        anotherWallet.publicKey,
-        splTokenMint
-      );
+    const [anotherMintAta, _4] = await findAssociatedTokenAccount(
+      anotherWallet.publicKey,
+      splTokenMint
+    );
 
-      const tx = await program.methods
-        .transferTokenToAnother()
-        .accounts({
-          splTokenMint: splTokenMint,
-          vault: vaultMint,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          systemProgram: SystemProgram.programId,
-          payerMintAta: payerMintAta,
-          payer: payer.publicKey,
-          anotherMintAta: anotherMintAta,
-          rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-          anotherAccount: anotherWallet.publicKey,
-        })
-        .signers([payer])
-        .rpc();
+    const tx = await program.methods
+      .transferTokenToAnother()
+      .accounts({
+        splTokenMint: splTokenMint,
+        vault: vaultMint,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+        payerMintAta: payerMintAta,
+        payer: payer.publicKey,
+        anotherMintAta: anotherMintAta,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        anotherAccount: anotherWallet.publicKey,
+      })
+      .signers([payer])
+      .rpc();
 
-      console.log("Your transaction signature", tx);
-    } catch (err) {
-      console.log(err);
-    }
-  });
+    console.log("Your transaction signature", tx);
+  } catch (err) {
+    console.log(err);
+  }
+});
 ```
 
-Run the command 
+Run the command
 
 ```bash
 anchor test
