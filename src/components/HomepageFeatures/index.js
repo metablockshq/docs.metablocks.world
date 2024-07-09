@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 const FeatureList = [
   {
     title: "Learn Solana Basics",
-    Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
+    imgSrc: require("@site/static/img/solana.png").default,
     description: (
       <>
         Meta Blocks documentation helps you get started with Solana development.
@@ -16,7 +16,7 @@ const FeatureList = [
   },
   {
     title: "Build with Anchor",
-    Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
+    imgSrc: require("@site/static/img/anchor.png").default,
     description: (
       <>
         There are two was to build on Solana: The hard way and the Anchor way.
@@ -26,7 +26,7 @@ const FeatureList = [
   },
   {
     title: "Drawn from experience shipping apps",
-    Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
+    imgSrc: require("@site/static/img/certificate.png").default,
     description: (
       <>
         Having built and shipped multiple apps on Solana, we extracted our
@@ -36,11 +36,11 @@ const FeatureList = [
   },
 ];
 
-function Feature({ Svg, title, description }) {
+function Feature({ imgSrc, title, description }) {
   return (
     <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img src={imgSrc} className={"h-24 w-auto mb-3"} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
